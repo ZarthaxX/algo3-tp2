@@ -7,9 +7,9 @@ using namespace std;
 
 namespace Expansivo{
 
-    pair<Score,Coloring> expansivo(AdyacencyMatrix& G, AdyacencyMatrix& H){
+    Coloring expansivo(Graph& G, Graph& H){
 
-        return make_pair(-1,Coloring(G.size(),-1));
+        return Coloring(G.getNodeCount(),-1);
     }
 
 }

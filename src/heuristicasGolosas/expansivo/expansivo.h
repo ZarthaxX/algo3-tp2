@@ -8,5 +8,5 @@
 using namespace std;
 
 namespace Expansivo{
-    pair<Score,Coloring> expansivo(AdyacencyMatrix& G, AdyacencyMatrix& H);
+    Coloring expansivo(Graph& G, Graph& H);
 }

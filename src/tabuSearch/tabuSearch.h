@@ -8,5 +8,5 @@
 using namespace std;
 
 namespace TabuSearch{
-    pair<Score,Coloring> tabuSearch(AdyacencyMatrix& G, AdyacencyMatrix& H);
+    Coloring tabuSearch(Graph& G, Graph& H);
 }

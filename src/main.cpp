@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <map>
 
+#include "heuristicasGolosas/bruteforcer/bruteforcer.h"
 #include "heuristicasGolosas/expansivo/expansivo.h"
 #include "heuristicasGolosas/secuencial/secuencial.h"
 #include "tabuSearch/tabuSearch.h"
@@ -16,11 +17,32 @@
 
 using namespace std;
 
+
+int getColoringScore(Graph& graph, Coloring& responseColoring){
+
+    int n = graph.getNodeCount();
+
+    Score score = 0;
+
+    for(int i = 0; i < n; i++){
+        for(int j = i+1; j < n; j++){
+            if( graph.isAdyacent(i,j) &&
+                responseColoring[i] == responseColoring[j]){
+                    score++;
+            }
+        }
+    }
+
+    return score;
+}
+
+
 int main(int argc, char** argv)
 {	
 	map<string, string> algoritmos_implementados = {
 		{"GE", "Heuristica golosa secuencial"}, 
 		{"GS", "Heuristica golosa expansivo"},
+		{"GB", "Heuristica golosa bruteforcer"},
 		{"TS", "Tabu Search"}
     };
 
@@ -41,12 +63,12 @@ int main(int argc, char** argv)
     
     cin >> n >> mG >> mH;
 
-    AdyacencyMatrix graphG, graphH;
-    graphG = graphH = AdyacencyMatrix(n, vector<bool>(n, false));
+    Graph graphG(n);
+    Graph graphH(n);
 
     for(int g = 0; g < 2; g++){
 
-        AdyacencyMatrix& graph = (g == 0) ? graphG : graphH;
+        Graph& graph = (g == 0) ? graphG : graphH;
         int m = (g == 0) ? mG : mH;
 
         for(int e = 0; e < m; e++){
@@ -54,25 +76,27 @@ int main(int argc, char** argv)
             int i, j;
             cin >> i >> j;
             i--;j--;
-            graph[i][j] = graph[j][i] = true;
+            graph.addEdge(i,j);
         }
     }
 
-    pair<Score,Coloring> coloring;
+    Coloring coloring;
 
     if(algoritmo == "GS"){
         coloring = Secuencial::secuencial(graphG,graphH);
     }else if(algoritmo == "GE"){
         coloring = Expansivo::expansivo(graphG,graphH);
+    }else if(algoritmo == "GB"){
+        coloring = Bruteforcer::bruteforcer(graphG,graphH);
     }else if(algoritmo == "TS"){
         coloring = TabuSearch::tabuSearch(graphG,graphH);
     }
 
     ColoringScoreVerifier::verify(graphG,graphH,coloring);
 
-    cout << coloring.first << endl;
+    cout << getColoringScore(graphH, coloring) << endl;
 
-    for(int v : coloring.second){
+    for(int v : coloring){
         cout << v << " ";
     }
     cout << endl;

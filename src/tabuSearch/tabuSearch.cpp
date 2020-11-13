@@ -7,9 +7,9 @@ using namespace std;
 
 namespace TabuSearch{
 
-    pair<Score,Coloring> tabuSearch(AdyacencyMatrix& G, AdyacencyMatrix& H){
+    Coloring tabuSearch(Graph& G, Graph& H){
         
-        return make_pair(-1,Coloring(G.size(),-1));
+        return Coloring(G.getNodeCount(),-1);
     }
 
 }

@@ -2,11 +2,11 @@
 
 #include <iostream>
 #include <vector>
-
+ 
 #include "../../types.h"
 
 using namespace std;
 
-namespace Secuencial{
-    Coloring secuencial(Graph& G, Graph& H);
+namespace Bruteforcer{
+    Coloring bruteforcer(Graph& G, Graph& H);
 }

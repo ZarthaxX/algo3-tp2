@@ -5,6 +5,10 @@ Graph::Graph(int n){
     _listOfAdyacents = vector<vector<int>>(n,vector<int>());
 }
 
+int Graph::getNodeCount() const{
+    return _matrix.size();
+}
+
 void Graph::addEdge(int node1,int node2){
     _matrix[node1][node2] = true;
     _matrix[node2][node1] = true;

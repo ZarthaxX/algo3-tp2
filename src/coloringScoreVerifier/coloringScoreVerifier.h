@@ -18,13 +18,12 @@ class ColoringScoreVerifier{
 
     ColoringScoreVerifier(){}
 
-    static void areAllNodesColored(AdyacencyMatrix& graph, Coloring& coloring);
-    static void areValidColors(AdyacencyMatrix& graph, Coloring& coloring);
-    static void isValidColoring(AdyacencyMatrix& graph, Coloring& coloring);
-    static void isValidScore(AdyacencyMatrix& graph, Coloring& coloring, Score responseScore);
+    static void areAllNodesColored(Graph& graph, Coloring& coloring);
+    static void areValidColors(Graph& graph, Coloring& coloring);
+    static void isValidColoring(Graph& graph, Coloring& coloring);
 
     public:
 
-    static void verify(AdyacencyMatrix& graphG, AdyacencyMatrix& graphH, pair<Score,Coloring> responseToVerify);
+    static void verify(Graph& graphG, Graph& graphH, Coloring responseToVerify);
 
 };

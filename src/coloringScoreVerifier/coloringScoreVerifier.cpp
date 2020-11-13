@@ -1,17 +1,17 @@
 #include "coloringScoreVerifier.h"
 
-void ColoringScoreVerifier::areAllNodesColored(AdyacencyMatrix& graph, Coloring& responseColoring){
+void ColoringScoreVerifier::areAllNodesColored(Graph& graph, Coloring& responseColoring){
 
-    int n = graph.size();
+    int n = graph.getNodeCount();
 
     if(n != responseColoring.size()){
         throw runtime_error(to_string(responseColoring.size()) + " nodes are colored but there are " + to_string(n) + " in total.");
     }
 }
 
-void ColoringScoreVerifier::areValidColors(AdyacencyMatrix& graph, Coloring& responseColoring){
+void ColoringScoreVerifier::areValidColors(Graph& graph, Coloring& responseColoring){
 
-    int n = graph.size();
+    int n = graph.getNodeCount();
 
     for(int color : responseColoring){
         if(!(0 <= color && color < n)){
@@ -20,13 +20,13 @@ void ColoringScoreVerifier::areValidColors(AdyacencyMatrix& graph, Coloring& res
     }
 }
 
-void ColoringScoreVerifier::isValidColoring(AdyacencyMatrix& graph, Coloring& responseColoring){
+void ColoringScoreVerifier::isValidColoring(Graph& graph, Coloring& responseColoring){
 
-    int n = graph.size();
+    int n = graph.getNodeCount();
 
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
-            if(graph[i][j] == true &&
+            if( graph.isAdyacent(i,j) &&
                 responseColoring[i] == responseColoring[j]){
                     throw runtime_error("Nodes " + to_string(i) + " and " + to_string(j) + " are adyacent and use the same color.");
             }
@@ -34,36 +34,13 @@ void ColoringScoreVerifier::isValidColoring(AdyacencyMatrix& graph, Coloring& re
     }
 }
 
-void ColoringScoreVerifier::isValidScore(AdyacencyMatrix& graph, Coloring& responseColoring, Score responseScore){
+void ColoringScoreVerifier::verify(Graph& graphG, Graph& graphH, Coloring responseToVerify){
 
-    int n = graph.size();
+    Coloring& responseColoring = responseToVerify;
 
-    Score score = 0;
-
-    for(int i = 0; i < n; i++){
-        for(int j = i+1; j < n; j++){
-            if(graph[i][j] == true &&
-                responseColoring[i] == responseColoring[j]){
-                    score++;
-            }
-        }
-    }
-
-    if(score != responseScore){
-        throw std::runtime_error("Response score is " + to_string(responseScore) + " but should be " + to_string(score) + ".");
-    }
-}
-
-void ColoringScoreVerifier::verify(AdyacencyMatrix& graphG, AdyacencyMatrix& graphH, pair<Score,Coloring> responseToVerify){
-
-    Score responseScore = responseToVerify.first;
-    Coloring& responseColoring = responseToVerify.second;
-
-    int n = graphG.size();
+    int n = graphG.getNodeCount();
 
     areAllNodesColored(graphG, responseColoring);
     areValidColors(graphG, responseColoring);
     isValidColoring(graphG, responseColoring);
-    isValidScore(graphH,responseColoring,responseScore);
-
 }

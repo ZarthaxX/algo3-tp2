@@ -7,9 +7,9 @@ using namespace std;
 
 namespace Secuencial{
     
-    pair<Score,Coloring> secuencial(AdyacencyMatrix& G, AdyacencyMatrix& H){
+    Coloring secuencial(Graph& G, Graph& H){
 
-        return make_pair(-1,Coloring(G.size(),-1));
+        return Coloring(G.getNodeCount(),-1);
     }
     
 }
