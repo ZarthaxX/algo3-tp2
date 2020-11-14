@@ -16,9 +16,9 @@ TabuSearch::Solution solution = TabuSearch::Solution(colors);
 TabuSearch::Change firstNodeADifferentColor = TabuSearch::Change(0,aColor,aDifferentColor);
 TabuSearch::Swap swapFirstAndSecond = TabuSearch::Swap(0,1);
 
-TabuSearch::Modificator anElement = firstNodeADifferentColor; 
-TabuSearch::Modificator anotherElement = swapFirstAndSecond; 
-TabuSearch::Modificator aThirdElement = TabuSearch::Change(0,aDifferentColor,aThirdColor);
+TabuSearch::Change anElement = firstNodeADifferentColor; 
+TabuSearch::Swap anotherElement = swapFirstAndSecond; 
+TabuSearch::Change aThirdElement = TabuSearch::Change(0,aDifferentColor,aThirdColor);
 
 void set_up()
 {
@@ -91,7 +91,9 @@ LT_END_AUTO_TEST(SwapsOfNodesInDifferentOrderAreEqual)
 LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryContainsStoredElements)
     auto memory = TabuSearch::Memory<TabuSearch::Modificator>(1);
     memory.add(anElement);
+    cout << typeid(anElement).name() << endl;
     LT_CHECK(memory.contains(anElement))
+    // memory.print_type_of_position(0);
     LT_CHECK(not memory.contains(anotherElement))
 LT_END_AUTO_TEST(MemoryContainsStoredElements)
 

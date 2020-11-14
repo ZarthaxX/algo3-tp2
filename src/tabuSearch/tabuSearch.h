@@ -36,9 +36,12 @@ namespace TabuSearch{
             Change(Node node,Color oldColor,Color newColor);
             void applyToSolution(Solution& solution);
             void reverseOnSolution(Solution& solution);
+            bool operator==(const Change& s) const;
+            bool operator!=(const Change& s) const;
         protected:
             bool equal_to(Modificator const& other) const {
-            if (Change const* p = dynamic_cast<Change const*>(&other)) {return *this == *p;}
+            Change const* p = dynamic_cast<Change const*>(&other);
+            if (p != NULL) {return *this == *p;}
             else {return false;}
             }
         private:
@@ -57,7 +60,8 @@ namespace TabuSearch{
             friend ostream& operator<<(ostream& os, const Swap& s);
         protected:
             bool equal_to(Modificator const& other) const {
-            if (Swap const* p = dynamic_cast<Swap const*>(&other)) {return *this == *p;}
+            Swap const* p = dynamic_cast<Swap const*>(&other);
+            if (p != NULL) {return *this == *p;}
             else {return false;}
             }
         private:
@@ -71,6 +75,7 @@ namespace TabuSearch{
             Memory(int size);
             bool contains(const T& e) const;
             void add(const T& e);
+            void print_type_of_position(int index);
         private:
             deque<T const*> _elems;
             int _size;
@@ -88,6 +93,10 @@ namespace TabuSearch{
 		    found = found || (e == **it);
         return found;
     }
+    template<class T>
+    void Memory<T>::print_type_of_position(int index){
+        cout << typeid(*_elems[index]).name() << endl;
+    };
 
     template<class T>
     void Memory<T>::add(const T& e){

@@ -67,6 +67,14 @@ namespace TabuSearch{
     void Change::reverseOnSolution(Solution& solution){
         solution.change(_node,_oldColor);
     }
+
+    bool Change::operator==(const Change& s) const{
+        return _node == s._node && _oldColor == s._oldColor && _newColor == s._newColor;
+            
+    }
+    bool Change::operator!=(const Change& s) const{
+        return !(*this==s);
+    }
     
     // Swap
     
