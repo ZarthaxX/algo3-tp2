@@ -26,6 +26,9 @@ namespace TabuSearch{
             Modificator(){};
             void applyToSolution(Solution& solution){};
             void reverseOnSolution(Solution& solution){};
+            friend bool operator==(Modificator const& lhs, Modificator const& rhs) {return lhs.equal_to(rhs);}
+        protected:
+            virtual bool equal_to(Modificator const& other) const {return false;};
     };
 
     class Change : public Modificator{
@@ -37,6 +40,11 @@ namespace TabuSearch{
             Node _node;
             Color _oldColor;
             Color _newColor;
+        protected:
+            bool equal_to(Modificator const& other) const {
+            if (Change const* p = dynamic_cast<Change const*>(&other)) {return *this == *p;}
+            else {return false;}
+            }
     };
 
     class Swap : public Modificator{
@@ -50,6 +58,11 @@ namespace TabuSearch{
         private:
             Node _node1;
             Node _node2;
+        protected:
+            bool equal_to(Modificator const& other) const {
+            if (Swap const* p = dynamic_cast<Swap const*>(&other)) {return *this == *p;}
+            else {return false;}
+            }
     };
  
     template<class T>
@@ -59,7 +72,7 @@ namespace TabuSearch{
             bool contains(const T& e) const;
             void add(const T& e);
         private:
-            deque<T> _elems;
+            deque<T const*> _elems;
             int _size;
     };
     
@@ -70,7 +83,7 @@ namespace TabuSearch{
     
     template<class T>
     bool Memory<T>::contains(const T& e) const{
-        return find(_elems.begin(),_elems.end(), e) != _elems.end();
+        return find_if(_elems.begin(),_elems.end(), [e](T const * elem){return *elem == e;}) != _elems.end();
     }
 
     template<class T>
@@ -78,7 +91,7 @@ namespace TabuSearch{
         if(_elems.size() == _size){
             _elems.pop_front();
         }
-        _elems.push_back(e);
+        _elems.push_back(&e);
     }
 
     Coloring tabuSearch(Graph& G, Graph& H);

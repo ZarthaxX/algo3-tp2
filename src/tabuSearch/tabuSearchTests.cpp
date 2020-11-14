@@ -89,13 +89,13 @@ LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, SwapsOfNodesInDifferentOrderAreEqu
 LT_END_AUTO_TEST(SwapsOfNodesInDifferentOrderAreEqual)
 
 LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryContainsStoredElements)
-    auto memory = TabuSearch::Memory<typeof(anElement)>(1);
+    auto memory = TabuSearch::Memory<TabuSearch::Modificator>(1);
     memory.add(anElement);
     LT_CHECK(memory.contains(anElement))
 LT_END_AUTO_TEST(MemoryContainsStoredElements)
 
 LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryBehavesFIFO)
-    auto memory = TabuSearch::Memory<typeof(anElement)>(2);
+    auto memory = TabuSearch::Memory<TabuSearch::Modificator>(2);
     memory.add(anElement);
     memory.add(anotherElement);
     LT_CHECK(memory.contains(anElement));
