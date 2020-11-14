@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "Expansivo.h"
+#include "expansivo.h"
 
 using namespace std;
 

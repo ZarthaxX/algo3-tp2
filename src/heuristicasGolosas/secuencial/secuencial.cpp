@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "Secuencial.h"
+#include "secuencial.h"
 
 using namespace std;
 

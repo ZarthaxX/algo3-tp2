@@ -8,6 +8,8 @@ using namespace std;
 typedef vector<vector<bool>> AdyacencyMatrix;
 typedef int Score;
 typedef vector<int> Coloring;
+typedef int Node;
+typedef int Color;
 
 class Graph{
     public:

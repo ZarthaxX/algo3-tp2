@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "Bruteforcer.h"
+#include "bruteforcer.h"
 
 using namespace std;
 
