@@ -103,12 +103,15 @@ LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryBehavesFIFO)
     memory.add(anotherElement);
     LT_CHECK(memory.contains(anElement));
     LT_CHECK(memory.contains(anotherElement));
+    LT_CHECK(not memory.contains(aThirdElement));
     memory.add(aThirdElement);
+    LT_CHECK(not memory.contains(anElement));
     LT_CHECK(memory.contains(anotherElement));
     LT_CHECK(memory.contains(aThirdElement));
     memory.add(anElement);
-    LT_CHECK(memory.contains(aThirdElement));
     LT_CHECK(memory.contains(anElement));
+    LT_CHECK(not memory.contains(anotherElement));
+    LT_CHECK(memory.contains(aThirdElement));
 LT_END_AUTO_TEST(MemoryBehavesFIFO)
 
 
