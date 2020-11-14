@@ -92,6 +92,7 @@ LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryContainsStoredElements)
     auto memory = TabuSearch::Memory<TabuSearch::Modificator>(1);
     memory.add(anElement);
     LT_CHECK(memory.contains(anElement))
+    LT_CHECK(not memory.contains(anotherElement))
 LT_END_AUTO_TEST(MemoryContainsStoredElements)
 
 LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryBehavesFIFO)

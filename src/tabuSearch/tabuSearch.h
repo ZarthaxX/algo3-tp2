@@ -24,11 +24,11 @@ namespace TabuSearch{
     class Modificator{
         public:
             Modificator(){};
-            void applyToSolution(Solution& solution){};
-            void reverseOnSolution(Solution& solution){};
+            virtual void applyToSolution(Solution& solution){};
+            virtual void reverseOnSolution(Solution& solution){};
             friend bool operator==(Modificator const& lhs, Modificator const& rhs) {return lhs.equal_to(rhs);}
         protected:
-            virtual bool equal_to(Modificator const& other) const {return false;};
+            virtual bool equal_to(Modificator const& other) const {return 0;};
     };
 
     class Change : public Modificator{
@@ -36,15 +36,15 @@ namespace TabuSearch{
             Change(Node node,Color oldColor,Color newColor);
             void applyToSolution(Solution& solution);
             void reverseOnSolution(Solution& solution);
-        private:
-            Node _node;
-            Color _oldColor;
-            Color _newColor;
         protected:
             bool equal_to(Modificator const& other) const {
             if (Change const* p = dynamic_cast<Change const*>(&other)) {return *this == *p;}
             else {return false;}
             }
+        private:
+            Node _node;
+            Color _oldColor;
+            Color _newColor;
     };
 
     class Swap : public Modificator{
@@ -55,14 +55,14 @@ namespace TabuSearch{
             bool operator==(const Swap& s) const;
             bool operator!=(const Swap& s) const;
             friend ostream& operator<<(ostream& os, const Swap& s);
-        private:
-            Node _node1;
-            Node _node2;
         protected:
             bool equal_to(Modificator const& other) const {
             if (Swap const* p = dynamic_cast<Swap const*>(&other)) {return *this == *p;}
             else {return false;}
             }
+        private:
+            Node _node1;
+            Node _node2;
     };
  
     template<class T>
@@ -83,7 +83,10 @@ namespace TabuSearch{
     
     template<class T>
     bool Memory<T>::contains(const T& e) const{
-        return find_if(_elems.begin(),_elems.end(), [e](T const * elem){return *elem == e;}) != _elems.end();
+        bool found = false;
+        for (auto it = _elems.begin(); it != _elems.end(); ++it)
+		    found = found || (e == **it);
+        return found;
     }
 
     template<class T>
