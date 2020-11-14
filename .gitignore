@@ -1,3 +1,5 @@
 *.exe
 *.svg
 *.csv
+*.in
+*.out

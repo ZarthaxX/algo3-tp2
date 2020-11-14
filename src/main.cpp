@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <map>
+#include <chrono>
+#include <set>
 
 #include "heuristicasGolosas/bruteforcer/bruteforcer.h"
 #include "heuristicasGolosas/expansivo/expansivo.h"
@@ -58,6 +60,20 @@ int main(int argc, char** argv)
 	}
     
 	string algoritmo = argv[1];
+    int longitud_tabu = 0;
+    string tipo_memoria = "none";
+    int porcentaje_vecindad = 0;
+
+    if(algoritmo == "TS"){
+        if(argc < 5){
+            cerr << "Cantidad de argumentos invalido" << endl;
+            return 0;
+        }
+
+        longitud_tabu = atoi(argv[2]);
+        tipo_memoria = string(argv[3]);
+        porcentaje_vecindad = atoi(argv[4]);
+    }
 
     int n, mG, mH;
     
@@ -82,6 +98,8 @@ int main(int argc, char** argv)
 
     Coloring coloring;
 
+	auto start = chrono::steady_clock::now();
+
     if(algoritmo == "GS"){
         coloring = Secuencial::secuencial(graphG,graphH);
     }else if(algoritmo == "GE"){
@@ -92,14 +110,22 @@ int main(int argc, char** argv)
         coloring = TabuSearch::tabuSearch(graphG,graphH);
     }
 
+	auto end = chrono::steady_clock::now();
+	double totalTime = chrono::duration<double, milli>(end - start).count();
+
     ColoringScoreVerifier::verify(graphG,graphH,coloring);
 
-    cout << getColoringScore(graphH, coloring) << endl;
+    clog <<  totalTime << " "
+         << getColoringScore(graphH, coloring) << " "
+         << set<int>(coloring.begin(), coloring.end()).size() << " "
+         << longitud_tabu << " "
+         << tipo_memoria << " "
+         << porcentaje_vecindad << endl;
 
     for(int v : coloring){
-        cout << v << " ";
+        clog << v << " ";
     }
-    cout << endl;
+    clog << endl;
 
     return 0;
 }
