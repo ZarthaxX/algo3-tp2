@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 
         for(int e = 0; e < m; e++){
 
-            int i, j;
+            Node i, j;
             cin >> i >> j;
             i--;j--;
             graph.addEdge(i,j);
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
          << tipo_memoria << " "
          << porcentaje_vecindad << endl;
 
-    for(int v : coloring){
+    for(Color v : coloring){
         clog << v << " ";
     }
     clog << endl;
