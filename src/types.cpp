@@ -26,10 +26,11 @@ const vector<int>& Graph::adyacents(Node node) const{
 
 //Funciones auxiliares
 
-bool colorIsValid(Graph& G,Coloring& colors,Node node,int c){
-    bool validColor = true;
-    for(auto it = G.adyacents(node).begin(); it != G.adyacents(node).end(); ++it){
-        validColor = validColor && (colors[*it] != c);
+bool colorIsValid(Graph& G,Coloring& coloring,Node node,Color nodeColor){
+    
+    for(Node adyNode : G.adyacents(node)){
+        if(coloring[adyNode]==nodeColor)
+            return false;
     }
-    return validColor;
+    return true;
 };

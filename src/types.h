@@ -11,9 +11,7 @@ typedef vector<int> Coloring;
 typedef int Node;
 typedef int Color;
 
-#ifndef noColor
-#define noColor -1
-#endif
+constexpr Color NO_COLOR = -1;
 
 class Graph{
     public:
@@ -29,5 +27,5 @@ class Graph{
 
 //Funciones auxiliares
 
-bool colorIsValid(Graph& G,Coloring& colors,Node node,int c);
+bool colorIsValid(Graph& G,Coloring& colors,Node node,Color c);
 

@@ -8,16 +8,7 @@ using namespace std;
 namespace Bruteforcer{
     const int INF_INT = 2000000000;
 
-    bool isColorValid(Graph& G,Coloring& coloring,Node node, Color nodeColor){
-        
-        for(Node adyNode : G.adyacents(node)){
-            if(coloring[adyNode]==nodeColor)
-                return false;
-        }
-        return true;
-    }
-
-    pair<float,int> heuristicScore(Graph& G, Graph& H, Coloring& coloring,Node node, Color nodeColor){
+    pair<int,int> heuristicScore(Graph& G, Graph& H, Coloring& coloring,Node node, Color nodeColor){
         int n = G.getNodeCount();
         
         int impactGain=0;
@@ -29,7 +20,7 @@ namespace Bruteforcer{
             if(!G.isAdyacent(node,adyNodeH)){
                 if(coloring[adyNodeH]==nodeColor){
                     impactGain++;
-                }else if(coloring[adyNodeH]!=-1){
+                }else if(coloring[adyNodeH]!=NO_COLOR){
                     impactLoss++;
                 }
                 neighboursH++;
@@ -37,8 +28,8 @@ namespace Bruteforcer{
         }
 
         for(Node adyNodeG : G.adyacents(node)){
-            if(coloring[adyNodeG]==-1){
-                if(!isColorValid(G,coloring,adyNodeG,nodeColor))
+            if(coloring[adyNodeG]==NO_COLOR){
+                if(!colorIsValid(G,coloring,adyNodeG,nodeColor))
                     continue;
 
                 for(Node adyNodeH : H.adyacents(adyNodeG)){
@@ -58,16 +49,16 @@ namespace Bruteforcer{
         int n = G.getNodeCount();
 
         Node bestNode=-1;
-        Color bestNodeColor=-1;
-        pair<float,int> bestScore(-INF_INT,-INF_INT); //INF
+        Color bestNodeColor=NO_COLOR;
+        pair<int,int> bestScore(-INF_INT,-INF_INT); //INF
 
         for(Node node=0; node < n; node++){
-            if(coloring[node]==-1){
+            if(coloring[node]==NO_COLOR){
                 for(Color color=0; color < n; color++){
-                    if(!isColorValid(G,coloring,node,color))
+                    if(!colorIsValid(G,coloring,node,color))
                         continue;
                     
-                    pair<float,int> score = heuristicScore(G,H,coloring,node,color);
+                    pair<int,int> score = heuristicScore(G,H,coloring,node,color);
 
                     if(score>bestScore){
                         bestScore=score;
@@ -84,7 +75,7 @@ namespace Bruteforcer{
     Coloring bruteforcer(Graph& G, Graph& H){
         int n = G.getNodeCount();
 
-        Coloring coloring(n,-1);
+        Coloring coloring(n,NO_COLOR);
 
         int coloredNodes = 0;
 

@@ -20,7 +20,7 @@ namespace Secuencial{
         // Paso 5) De quedarme sin colores candidatos, eligo el min disponible que no fue usado en la vecindad de G y termino.
 
 
-        Coloring coloreo = Coloring(G.getNodeCount(),noColor);
+        Coloring coloreo = Coloring(G.getNodeCount(),NO_COLOR);
         vector<Node> nodos_a_recorrer = vector<Node>(G.getNodeCount(),-1);
         for(int i = 0;i < nodos_a_recorrer.size();++i){
             nodos_a_recorrer[i] = i;
@@ -47,7 +47,7 @@ namespace Secuencial{
             
             // Recorro los colores candidatos de mayor a menor
             for(auto it = vector_colores_adyacentes.begin(); it != vector_colores_adyacentes.end(); ++it){
-                if(it->first != noColor){
+                if(it->first != NO_COLOR){
                     bool canColor = colorIsValid(G,coloreo,nodo_actual,it->first);
                     if(canColor){
                         coloreo[nodo_actual] = it->first;
@@ -58,9 +58,9 @@ namespace Secuencial{
 
             // Si llegamos aca: termine de recorrer la lista de colores o es vacia.
             
-            if(coloreo[nodo_actual] == -1){
+            if(coloreo[nodo_actual] == NO_COLOR){
                 int color = 0;
-                while(not colorIsValid(G,coloreo,nodo_actual,color)){color++;}
+                while(!colorIsValid(G,coloreo,nodo_actual,color)){color++;}
                 coloreo[nodo_actual] = color;
             }
         }
