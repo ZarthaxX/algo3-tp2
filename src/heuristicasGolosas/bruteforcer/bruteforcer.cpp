@@ -17,7 +17,7 @@ namespace Bruteforcer{
         return true;
     }
 
-    pair<int,int> heuristicScore(Graph& G, Graph& H, Coloring& coloring,Node node, Color nodeColor){
+    pair<float,int> heuristicScore(Graph& G, Graph& H, Coloring& coloring,Node node, Color nodeColor){
         int n = G.getNodeCount();
         
         int impactGain=0;
@@ -59,7 +59,7 @@ namespace Bruteforcer{
 
         Node bestNode=-1;
         Color bestNodeColor=-1;
-        pair<int,int> bestScore(-INF_INT,-INF_INT); //INF
+        pair<float,int> bestScore(-INF_INT,-INF_INT); //INF
 
         for(Node node=0; node < n; node++){
             if(coloring[node]==-1){
@@ -67,7 +67,7 @@ namespace Bruteforcer{
                     if(!isColorValid(G,coloring,node,color))
                         continue;
                     
-                    pair<int,int> score = heuristicScore(G,H,coloring,node,color);
+                    pair<float,int> score = heuristicScore(G,H,coloring,node,color);
 
                     if(score>bestScore){
                         bestScore=score;
@@ -89,7 +89,7 @@ namespace Bruteforcer{
         int coloredNodes = 0;
 
         while(coloredNodes < n){
-            pair<Color,Node> bestNodeColor = bestNodeColorHeuristic(G,H,coloring);
+            pair<Node,Color> bestNodeColor = bestNodeColorHeuristic(G,H,coloring);
             coloring[bestNodeColor.first] = bestNodeColor.second;
             coloredNodes++;
         }

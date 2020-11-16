@@ -38,12 +38,11 @@ int getColoringScore(Graph& graph, Coloring& responseColoring){
     return score;
 }
 
-
 int main(int argc, char** argv)
 {	
 	map<string, string> algoritmos_implementados = {
-		{"GE", "Heuristica golosa secuencial"}, 
-		{"GS", "Heuristica golosa expansivo"},
+		{"GS", "Heuristica golosa secuencial"},
+		{"GE", "Heuristica golosa expansivo"}, 
 		{"GB", "Heuristica golosa bruteforcer"},
 		{"TS", "Tabu Search"}
     };
