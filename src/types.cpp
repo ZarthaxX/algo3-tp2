@@ -9,17 +9,27 @@ int Graph::getNodeCount() const{
     return _matrix.size();
 }
 
-void Graph::addEdge(int node1,int node2){
+void Graph::addEdge(Node node1,Node node2){
     _matrix[node1][node2] = true;
     _matrix[node2][node1] = true;
     _listOfAdyacents[node1].push_back(node2);
     _listOfAdyacents[node2].push_back(node1); 
 }
 
-bool Graph::isAdyacent(int node1, int node2) const{
+bool Graph::isAdyacent(Node node1, Node node2) const{
     return _matrix[node1][node2];
 }
 
-const vector<int>& Graph::adyacents(int node) const{
+const vector<int>& Graph::adyacents(Node node) const{
     return _listOfAdyacents[node];
 }
+
+//Funciones auxiliares
+
+bool colorIsValid(Graph& G,Coloring& colors,Node node,int c){
+    bool validColor = true;
+    for(auto it = G.adyacents(node).begin(); it != G.adyacents(node).end(); ++it){
+        validColor = validColor && (colors[*it] != c);
+    }
+    return validColor;
+};

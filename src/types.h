@@ -11,6 +11,10 @@ typedef vector<int> Coloring;
 typedef int Node;
 typedef int Color;
 
+#ifndef noColor
+#define noColor -1
+#endif
+
 class Graph{
     public:
         Graph(int n);
@@ -23,4 +27,7 @@ class Graph{
         vector<vector<int>> _listOfAdyacents;
 };
 
+//Funciones auxiliares
+
+bool colorIsValid(Graph& G,Coloring& colors,Node node,int c);
 
