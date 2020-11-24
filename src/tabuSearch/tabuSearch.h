@@ -8,14 +8,19 @@
 
 namespace TabuSearch{
 
+    class Modificator;
+
     class Solution{
         public:
             Solution(Coloring initialColoring);
+            bool modificationIsValid(Modificator* modificator,Graph& G);
             void change(Node node,Color color);
             void swap(Node node1,Node node2);
             Color colorOfNode(Node node);
+            bool modificationIsValid(Modificator& modificator,Graph G);
             bool operator==(const Solution& s) const;
             bool operator!=(const Solution& s) const;
+            const Coloring& getColoring() const;
             friend ostream& operator<<(ostream& os, const Solution& s);
         private:
             Coloring _colorsByNodes;
@@ -26,6 +31,7 @@ namespace TabuSearch{
             Modificator(){};
             virtual void applyToSolution(Solution& solution){};
             virtual void reverseOnSolution(Solution& solution){};
+            virtual vector<Node> affectedNodes() {return {-1};};
             friend bool operator==(Modificator const& lhs, Modificator const& rhs) {return lhs.equal_to(rhs);}
         protected:
             virtual bool equal_to(Modificator const& other) const {return 0;};
@@ -36,6 +42,7 @@ namespace TabuSearch{
             Change(Node node,Color oldColor,Color newColor);
             void applyToSolution(Solution& solution);
             void reverseOnSolution(Solution& solution);
+            vector<Node> affectedNodes();
             bool operator==(const Change& s) const;
             bool operator!=(const Change& s) const;
         protected:
@@ -55,6 +62,7 @@ namespace TabuSearch{
             Swap(Node node1,Node node2);
             void applyToSolution(Solution& solution);
             void reverseOnSolution(Solution& solution);
+            vector<Node> affectedNodes();
             bool operator==(const Swap& s) const;
             bool operator!=(const Swap& s) const;
             friend ostream& operator<<(ostream& os, const Swap& s);
@@ -106,6 +114,6 @@ namespace TabuSearch{
         _elems.push_back(&e);
     }
 
-    Coloring tabuSearch(Graph& G, Graph& H);
+    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage);
 
 }

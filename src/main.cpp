@@ -106,7 +106,7 @@ int main(int argc, char** argv)
     }else if(algoritmo == "GB"){
         coloring = Bruteforcer::bruteforcer(graphG,graphH);
     }else if(algoritmo == "TS"){
-        coloring = TabuSearch::tabuSearch(graphG,graphH);
+        coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad);
     }
 
 	auto end = chrono::steady_clock::now();
