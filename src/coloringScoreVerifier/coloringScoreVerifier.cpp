@@ -39,7 +39,7 @@ void ColoringScoreVerifier::verify(Graph& graphG, Graph& graphH, Coloring respon
     Coloring& responseColoring = responseToVerify;
 
     int n = graphG.getNodeCount();
-
+    cerr<<"Response: ";for(Color c : responseColoring)cerr << c << " ";cerr<<endl;
     areAllNodesColored(graphG, responseColoring);
     areValidColors(graphG, responseColoring);
     isValidColoring(graphG, responseColoring);

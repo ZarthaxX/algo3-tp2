@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <assert.h>
 
 #include "tabuSearch.h"
 #include "../heuristicasGolosas/expansivo/expansivo.h"
@@ -207,6 +208,8 @@ retornar s
         Coloring initialColoring = Expansivo::expansivo(G,H);
 
         Solution solution(initialColoring);
+        Solution bestSolution(solution);
+        int bestImpact = calculateImpact(H,bestSolution);
 
         Memory<Solution> tabuMemory(memorySize);
         
@@ -214,7 +217,11 @@ retornar s
         int LIMIT = 1000;
 
         while(iterations < LIMIT){
-            
+            /*cerr<<"Iteration: " << iterations<< " coloring: ";
+              for(int i = 0;i < n;i++){
+                    cerr<<solution.getColoring()[i]<<" ";
+                }cerr<<endl;
+            */
             vector<Modificator*>neighbourhood;
             //Change Neighbourhood
             for(Node node = 0;node < n;node++){
@@ -234,41 +241,56 @@ retornar s
             
             int percentage = (int)(neighbourhood.size()*((float)neighbourhoodPercentage/100.0));
 
-            int bestImpact = -1;
+            int bestNewImpact = -1;
             int bestIndex = -1;
 
             for(int i = 0;i < percentage;i++){
                 Modificator * modificator = neighbourhood[i];
 
                 if(solution.modificationIsValid(modificator, G)){
+                    auto solutionCopy = solution;
+
                     modificator->applyToSolution(solution);
 
-                    if(tabuMemory.contains(solution))
+                    if(tabuMemory.contains(solution)){//chequear si continue anda bien adentro del if
+                        modificator->reverseOnSolution(solution);
                         continue;
+                    } 
+                     
 
                     int impact = calculateImpact(H,solution);
 
-                    if(impact > bestImpact){
-                        bestImpact = impact;
+                    if(impact > bestNewImpact){
+                        bestNewImpact = impact;
                         bestIndex = i;
                     }
 
                     modificator->reverseOnSolution(solution);
+
+                    for(int i = 0;i < n;i++){
+                        assert(solution.getColoring()[i]==solutionCopy.getColoring()[i]);
+                    }
+                    assert(solutionCopy == solution);
                 }
             }
 
             int currentImpact = calculateImpact(H,solution);
 
             //aca podriamos agregar la funcion de aspiracion para permitir peores soluciones
-            if(currentImpact < bestImpact){
+            if(currentImpact < bestNewImpact){
                 neighbourhood[bestIndex]->applyToSolution(solution);
                 tabuMemory.add(solution);
+            }
+
+            if(bestImpact < currentImpact){
+                bestSolution = solution;
+                bestImpact = currentImpact;
             }
 
             iterations++;
         }
 
-        return solution.getColoring();
+        return bestSolution.getColoring();
     }
 /*
             //Change Neighbourhood
