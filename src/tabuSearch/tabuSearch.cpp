@@ -163,6 +163,24 @@ namespace TabuSearch{
         }
         _elems.push_back(e);
     }
+    
+    MemoryModificators::MemoryModificators(int size){
+        _size = size;
+    }
+    
+    bool MemoryModificators::contains(const unique_ptr<Modificator> &e) const{
+        for(int i = 0;i < _elems.size();i++){
+            if(*_elems[i] == *e)return true;
+        }
+        return false;
+    }
+    
+    void MemoryModificators::add(unique_ptr<Modificator>& e){
+        if(_elems.size() == _size){
+            _elems.pop_front();
+        }
+        _elems.push_back(std::move(e));
+    }
         
         
 /*
@@ -215,7 +233,7 @@ retornar s
 
         return score;
     }
-
+    
     Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions){
         
         int n = G.getNodeCount();
@@ -229,7 +247,7 @@ retornar s
 
         //Es optimizable?
         MemorySolution tabuMemoryS(memorySize);
-       // Memory<Modificator> tabuMemoryM(memorySize);
+        MemoryModificators tabuMemoryM(memorySize);
         
         //Mejorar
         int iterationsSinceLastImprovement = 0;
@@ -245,14 +263,15 @@ retornar s
             //Change Neighbourhood
             for(Node node = 0;node < n;node++){
                 for(Color color = 0;color < n;color++){
-                    neighbourhood.push_back(make_unique<Change>(Change(node,solution.colorOfNode(node),color)));
+                    unique_ptr<Modificator> newChange = make_unique<Change>(Change(node,solution.colorOfNode(node),color));
+                    neighbourhood.push_back(move(newChange));
                 }
             }
             //Swap Neighbourhood
-            vector<Swap> allSwaps;
             for(Node node1 = 0;node1 < n;node1++){
                 for(Node node2 = node1+1;node2 < n;node2++){
-                    neighbourhood.push_back(make_unique<Swap>(Swap(node1,node2)));
+                    unique_ptr<Modificator> newSwap = make_unique<Swap>(Swap(node1,node2));
+                    neighbourhood.push_back(move(newSwap));
                 }
             }
 
@@ -281,8 +300,7 @@ retornar s
                     if(memoryOfSolutions){
                         isTabu = tabuMemoryS.contains(solution);
                     } else {
-                       // isTabu = tabuMemoryM.contains(modificator);
-                       
+                        isTabu = tabuMemoryM.contains(modificator);
                     }
             
                     if(isTabu){//chequear si continue anda bien adentro del if
@@ -299,6 +317,7 @@ retornar s
 
                     modificator->reverseOnSolution(solution);
                 }
+                
             }
 
             if(memoryOfSolutions){
@@ -308,7 +327,7 @@ retornar s
             int currentImpact = -1;
             if(bestIndex != -1){
                 neighbourhood[bestIndex]->applyToSolution(solution);
-                //tabuMemoryM.add(neighbourhood[bestIndex]);
+                if(not memoryOfSolutions) tabuMemoryM.add(neighbourhood[bestIndex]);
                 currentImpact = bestNewImpact;
             }
             else if(bestTabuIndex != -1 ){
