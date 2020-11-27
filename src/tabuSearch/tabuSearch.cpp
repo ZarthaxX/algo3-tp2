@@ -300,8 +300,7 @@ retornar s
                     if(memoryOfSolutions){
                         isTabu = tabuMemoryS.contains(solution);
                     } else {
-                       // isTabu = tabuMemoryM.contains(modificator);
-                       
+                        isTabu = tabuMemoryM.contains(modificator);
                     }
             
                     if(isTabu){//chequear si continue anda bien adentro del if
@@ -328,7 +327,7 @@ retornar s
             int currentImpact = -1;
             if(bestIndex != -1){
                 neighbourhood[bestIndex]->applyToSolution(solution);
-                //tabuMemoryM.add(neighbourhood[bestIndex]);
+                if(not memoryOfSolutions) tabuMemoryM.add(neighbourhood[bestIndex]);
                 currentImpact = bestNewImpact;
             }
             else if(bestTabuIndex != -1 ){
