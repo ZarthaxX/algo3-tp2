@@ -234,11 +234,11 @@ retornar s
         return score;
     }
     
-    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions){
+    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions,int max_iterations){
         
         int n = G.getNodeCount();
 
-        Coloring initialColoring(n,NO_COLOR);//Expansivo::expansivo(G,H);
+        Coloring initialColoring(Expansivo::expansivo(G,H));//
         for(Color c=0;c<n;c++)initialColoring[c]=c;
         
         Solution solution(initialColoring);
@@ -250,10 +250,9 @@ retornar s
         MemoryModificators tabuMemoryM(memorySize);
         
         //Mejorar
-        int iterationsSinceLastImprovement = 0;
-        int LIMIT = 1000;
+        int iterations = 0;
 
-        while(iterationsSinceLastImprovement < LIMIT){
+        while(iterations < max_iterations){
             /*cerr<<"Iteration: " << iterations<< " coloring: ";
               for(int i = 0;i < n;i++){
                     cerr<<solution.getColoring()[i]<<" ";
@@ -338,11 +337,8 @@ retornar s
             if(bestImpact < currentImpact){
                 bestSolution = solution;
                 bestImpact = currentImpact;
-                iterationsSinceLastImprovement = 0;
-            }else{
-                iterationsSinceLastImprovement++;
             }
-
+            iterations++;
         }
 
         return bestSolution.getColoring();

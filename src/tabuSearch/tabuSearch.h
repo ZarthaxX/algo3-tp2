@@ -160,6 +160,6 @@ namespace TabuSearch{
 
     */
  
-    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions);
+    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions, int max_iterations);
 
 }
