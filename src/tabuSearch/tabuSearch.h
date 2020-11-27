@@ -87,6 +87,20 @@ namespace TabuSearch{
             int _size;
     };
 
+    class MemoryModificators{
+        public: 
+            explicit MemoryModificators(int size);
+            MemoryModificators(const MemoryModificators&) = delete;
+            MemoryModificators& operator=(const MemoryModificators&) = delete;
+            ~MemoryModificators() = default;
+            bool contains(const unique_ptr<Modificator>& e) const;
+            void add(unique_ptr<Modificator>& e);
+        private:
+            deque<unique_ptr<Modificator>> _elems;
+            int _size;
+    };
+
+
     /*
     
     Memory::Memory(int size){

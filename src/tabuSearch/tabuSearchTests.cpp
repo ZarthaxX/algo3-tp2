@@ -1,5 +1,6 @@
 
 #include <vector>
+#include <memory>
 #include "../tests/littletest.hpp"
 #include "tabuSearch.h"
 #include "../types.h"
@@ -16,9 +17,14 @@ TabuSearch::Solution solution = TabuSearch::Solution(colors);
 TabuSearch::Change firstNodeADifferentColor = TabuSearch::Change(0,aColor,aDifferentColor);
 TabuSearch::Swap swapFirstAndSecond = TabuSearch::Swap(0,1);
 
-TabuSearch::Change anElement = firstNodeADifferentColor; 
-TabuSearch::Swap anotherElement = swapFirstAndSecond; 
-TabuSearch::Change aThirdElement = TabuSearch::Change(0,aDifferentColor,aThirdColor);
+unique_ptr<TabuSearch::Modificator> anElement = make_unique<TabuSearch::Change>(firstNodeADifferentColor); 
+unique_ptr<TabuSearch::Modificator> anotherElement = make_unique<TabuSearch::Swap>(swapFirstAndSecond); 
+unique_ptr<TabuSearch::Modificator> aThirdElement = make_unique<TabuSearch::Change>(TabuSearch::Change(0,aDifferentColor,aThirdColor));
+
+
+unique_ptr<TabuSearch::Modificator> anElementCopy = make_unique<TabuSearch::Change>(firstNodeADifferentColor); 
+unique_ptr<TabuSearch::Modificator> anotherElementCopy = make_unique<TabuSearch::Swap>(swapFirstAndSecond); 
+unique_ptr<TabuSearch::Modificator> aThirdElementCopy = make_unique<TabuSearch::Change>(TabuSearch::Change(0,aDifferentColor,aThirdColor));
 
 void set_up()
 {
@@ -88,30 +94,26 @@ LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, SwapsOfNodesInDifferentOrderAreEqu
     LT_CHECK_EQ(swapFirstAndSecond,swapSecondAndFirst);
 LT_END_AUTO_TEST(SwapsOfNodesInDifferentOrderAreEqual)
 
+
 LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryContainsStoredElements)
-    auto memory = TabuSearch::Memory<TabuSearch::Modificator>(1);
+    TabuSearch::MemoryModificators memory(1);
     memory.add(anElement);
-    cout << typeid(anElement).name() << endl;
-    LT_CHECK(memory.contains(anElement))
-    // memory.print_type_of_position(0);
-    LT_CHECK(not memory.contains(anotherElement))
+    LT_CHECK(memory.contains(anElementCopy))
+    LT_CHECK(not memory.contains(anotherElementCopy))
 LT_END_AUTO_TEST(MemoryContainsStoredElements)
 
+
 LT_BEGIN_AUTO_TEST(TabuSearchStructuresTests, MemoryBehavesFIFO)
-    auto memory = TabuSearch::Memory<TabuSearch::Modificator>(2);
+    TabuSearch::MemoryModificators memory(2);
     memory.add(anElement);
     memory.add(anotherElement);
-    LT_CHECK(memory.contains(anElement));
-    LT_CHECK(memory.contains(anotherElement));
-    LT_CHECK(not memory.contains(aThirdElement));
+    LT_CHECK(memory.contains(anElementCopy));
+    LT_CHECK(memory.contains(anotherElementCopy));
+    LT_CHECK(not memory.contains(aThirdElementCopy));
     memory.add(aThirdElement);
-    LT_CHECK(not memory.contains(anElement));
-    LT_CHECK(memory.contains(anotherElement));
-    LT_CHECK(memory.contains(aThirdElement));
-    memory.add(anElement);
-    LT_CHECK(memory.contains(anElement));
-    LT_CHECK(not memory.contains(anotherElement));
-    LT_CHECK(memory.contains(aThirdElement));
+    LT_CHECK(not memory.contains(anElementCopy));
+    LT_CHECK(memory.contains(anotherElementCopy));
+    LT_CHECK(memory.contains(aThirdElementCopy));
 LT_END_AUTO_TEST(MemoryBehavesFIFO)
 
 
