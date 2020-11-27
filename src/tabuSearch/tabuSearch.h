@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <deque>
+#include <memory>
 
 #include "../types.h"
 
@@ -13,11 +14,10 @@ namespace TabuSearch{
     class Solution{
         public:
             Solution(Coloring initialColoring);
-            bool modificationIsValid(Modificator* modificator,Graph& G);
+            bool modificationIsValid(unique_ptr<Modificator>& modificator,Graph& G);
             void change(Node node,Color color);
             void swap(Node node1,Node node2);
             Color colorOfNode(Node node);
-            bool modificationIsValid(Modificator& modificator,Graph G);
             bool operator==(const Solution& s) const;
             bool operator!=(const Solution& s) const;
             const Coloring& getColoring() const;
@@ -76,31 +76,38 @@ namespace TabuSearch{
             Node _node1;
             Node _node2;
     };
- 
-    template<class T>
-    class Memory{
-        public:
-            Memory(int size);
-            bool contains(const T& e) const;
-            void add(const T& e);
-            void print_type_of_position(int index);
+
+    class MemorySolution{
+        public: 
+            MemorySolution(int size);
+            bool contains(const Solution& e) const;
+            void add(const Solution& e);
         private:
-            deque<T const*> _elems;
+            deque<Solution> _elems;
             int _size;
     };
+
+    /*
     
-    template<class T>
-    Memory<T>::Memory(int size){
+    Memory::Memory(int size){
         _size = size;
     }
     
-    template<class T>
-    bool Memory<T>::contains(const T& e) const{
+    bool Memory::contains(const T& e) const{
         bool found = false;
         for (auto it = _elems.begin(); it != _elems.end(); ++it)
-		    found = found || (e == **it);
+		    found = found || (e == *it);
         return found;
     }
+
+    template<class T>
+    bool Memory<T>::contains(const T* e) const{
+        bool found = false;
+        for (auto it = _elems.begin(); it != _elems.end(); ++it)
+		    found = found || (*e == **it);
+        return found;
+    }
+
     template<class T>
     void Memory<T>::print_type_of_position(int index){
         cout << typeid(*_elems[index]).name() << endl;
@@ -114,6 +121,31 @@ namespace TabuSearch{
         _elems.push_back(&e);
     }
 
-    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage);
+    template<class T>
+    void Memory<T>::add(const T * e){
+        if(_elems.size() == _size){
+            _elems.pop_front();
+        }
+        _elems.push_back(e);
+    }
+
+
+    
+
+
+    class MemoryModificators{
+        public:
+            Memory(int size);
+            bool contains(const Modificator* e) const;
+            void add(const Solution& e);
+            void print_type_of_position(int index);
+        private:
+            deque<Solution> _elems;
+            int _size;
+    };
+
+    */
+ 
+    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions);
 
 }

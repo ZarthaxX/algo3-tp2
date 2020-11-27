@@ -45,7 +45,7 @@ namespace TabuSearch{
         return true;
     }
 
-    bool Solution::modificationIsValid(Modificator* modificator,Graph& G){
+    bool Solution::modificationIsValid(unique_ptr<Modificator>& modificator,Graph& G){
         //Modificator - affected nodes vector<nodos> 
         //Aplicame
         //Revisa que sea validos los nodos afectados
@@ -149,6 +149,22 @@ namespace TabuSearch{
     
     // Memory
 
+    MemorySolution::MemorySolution(int size){
+        _size = size;
+    }
+    
+    bool MemorySolution::contains(const Solution &e) const{
+        return std::find(_elems.begin(), _elems.end(), e) != _elems.end();
+    }
+
+    void MemorySolution::add(const Solution& e){
+          if(_elems.size() == _size){
+            _elems.pop_front();
+        }
+        _elems.push_back(e);
+    }
+        
+        
 /*
 busquedaTabu(. . .)
 salida: s solucion factible
@@ -182,7 +198,6 @@ fin mientras
 retornar s
     */
 
-
     int calculateImpact(Graph& graph, Solution& solution){
 
         int n = graph.getNodeCount();
@@ -201,39 +216,43 @@ retornar s
         return score;
     }
 
-    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage){
+    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions){
         
         int n = G.getNodeCount();
 
-        Coloring initialColoring = Expansivo::expansivo(G,H);
-
+        Coloring initialColoring(n,NO_COLOR);//Expansivo::expansivo(G,H);
+        for(Color c=0;c<n;c++)initialColoring[c]=c;
+        
         Solution solution(initialColoring);
         Solution bestSolution(solution);
         int bestImpact = calculateImpact(H,bestSolution);
 
-        Memory<Solution> tabuMemory(memorySize);
+        //Es optimizable?
+        MemorySolution tabuMemoryS(memorySize);
+       // Memory<Modificator> tabuMemoryM(memorySize);
         
-        int iterations = 0;
+        //Mejorar
+        int iterationsSinceLastImprovement = 0;
         int LIMIT = 1000;
 
-        while(iterations < LIMIT){
+        while(iterationsSinceLastImprovement < LIMIT){
             /*cerr<<"Iteration: " << iterations<< " coloring: ";
               for(int i = 0;i < n;i++){
                     cerr<<solution.getColoring()[i]<<" ";
                 }cerr<<endl;
             */
-            vector<Modificator*>neighbourhood;
+            vector<unique_ptr<Modificator>>neighbourhood;
             //Change Neighbourhood
             for(Node node = 0;node < n;node++){
                 for(Color color = 0;color < n;color++){
-                    neighbourhood.push_back(new Change(node,solution.colorOfNode(node),color));
+                    neighbourhood.push_back(make_unique<Change>(Change(node,solution.colorOfNode(node),color)));
                 }
             }
             //Swap Neighbourhood
             vector<Swap> allSwaps;
             for(Node node1 = 0;node1 < n;node1++){
                 for(Node node2 = node1+1;node2 < n;node2++){
-                    neighbourhood.push_back(new Swap(node1,node2));
+                    neighbourhood.push_back(make_unique<Swap>(Swap(node1,node2)));
                 }
             }
 
@@ -241,53 +260,70 @@ retornar s
             
             int percentage = (int)(neighbourhood.size()*((float)neighbourhoodPercentage/100.0));
 
+            // Local. del vecindario.
             int bestNewImpact = -1;
             int bestIndex = -1;
-
+            
+            //Aspiracion
+            int bestTabuIndex = -1;
+            int bestTabuImpact = -1;
+         
             for(int i = 0;i < percentage;i++){
-                Modificator * modificator = neighbourhood[i];
+                unique_ptr<Modificator>& modificator = neighbourhood[i];
 
                 if(solution.modificationIsValid(modificator, G)){
-                    auto solutionCopy = solution;
 
                     modificator->applyToSolution(solution);
 
-                    if(tabuMemory.contains(solution)){//chequear si continue anda bien adentro del if
-                        modificator->reverseOnSolution(solution);
-                        continue;
-                    } 
-                     
-
                     int impact = calculateImpact(H,solution);
-
-                    if(impact > bestNewImpact){
-                        bestNewImpact = impact;
-                        bestIndex = i;
+                    bool isTabu = false;
+                    
+                    if(memoryOfSolutions){
+                        isTabu = tabuMemoryS.contains(solution);
+                    } else {
+                       // isTabu = tabuMemoryM.contains(modificator);
+                       
+                    }
+            
+                    if(isTabu){//chequear si continue anda bien adentro del if
+                        if(impact > bestTabuImpact){
+                            bestTabuImpact = impact;
+                            bestTabuIndex = i;
+                        }
+                    }else{
+                        if(impact > bestNewImpact){
+                            bestNewImpact = impact;
+                            bestIndex = i;
+                        }
                     }
 
                     modificator->reverseOnSolution(solution);
-
-                    for(int i = 0;i < n;i++){
-                        assert(solution.getColoring()[i]==solutionCopy.getColoring()[i]);
-                    }
-                    assert(solutionCopy == solution);
                 }
             }
 
-            int currentImpact = calculateImpact(H,solution);
-
-            //aca podriamos agregar la funcion de aspiracion para permitir peores soluciones
-            if(currentImpact < bestNewImpact){
-                neighbourhood[bestIndex]->applyToSolution(solution);
-                tabuMemory.add(solution);
+            if(memoryOfSolutions){
+                tabuMemoryS.add(solution);
             }
 
+            int currentImpact = -1;
+            if(bestIndex != -1){
+                neighbourhood[bestIndex]->applyToSolution(solution);
+                //tabuMemoryM.add(neighbourhood[bestIndex]);
+                currentImpact = bestNewImpact;
+            }
+            else if(bestTabuIndex != -1 ){
+                neighbourhood[bestTabuIndex]->applyToSolution(solution);
+                currentImpact = bestTabuImpact;
+            }
+            
             if(bestImpact < currentImpact){
                 bestSolution = solution;
                 bestImpact = currentImpact;
+                iterationsSinceLastImprovement = 0;
+            }else{
+                iterationsSinceLastImprovement++;
             }
 
-            iterations++;
         }
 
         return bestSolution.getColoring();

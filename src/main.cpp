@@ -73,7 +73,9 @@ int main(int argc, char** argv)
         tipo_memoria = string(argv[3]);
         porcentaje_vecindad = atoi(argv[4]);
     }
-
+    
+    bool memoryOfSolutions = (tipo_memoria == "estructura");
+    
     int n, mG, mH;
     
     cin >> n >> mG >> mH;
@@ -106,7 +108,7 @@ int main(int argc, char** argv)
     }else if(algoritmo == "GB"){
         coloring = Bruteforcer::bruteforcer(graphG,graphH);
     }else if(algoritmo == "TS"){
-        coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad);
+        coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad,memoryOfSolutions);
     }
 
 	auto end = chrono::steady_clock::now();
