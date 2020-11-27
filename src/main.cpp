@@ -18,6 +18,21 @@
 #include "coloringScoreVerifier/coloringScoreVerifier.h"
 
 using namespace std;
+using namespace chrono;
+//high_resolution_clock::time_point now = high_resolution_clock::now();
+//#define TIME duration_cast<duration<double>>(high_resolution_clock::now() - now).count()
+#define NOW high_resolution_clock::now()
+#define TIMEOUT 40000 //10 ms timeout
+#define TIMEOUT2 900000
+#define Now() chrono::high_resolution_clock::now()
+static struct Stopwatch {
+	chrono::high_resolution_clock::time_point c_time, c_timeout;
+	void setTimeout(int us) { c_timeout = c_time + chrono::microseconds(us); }
+	void Start() { c_time = Now();}
+	inline bool Timeout() { return Now() > c_timeout; }
+	long long EllapsedMicroseconds() { return chrono::duration_cast<chrono::microseconds>(Now() - c_time).count(); }
+	long long EllapsedMilliseconds() { return chrono::duration_cast<chrono::milliseconds>(Now() - c_time).count(); }
+} stopwatch;//} Stopwatch
 
 
 int getColoringScore(Graph& graph, Coloring& responseColoring){
@@ -101,7 +116,7 @@ int main(int argc, char** argv)
 
     Coloring coloring;
 
-	auto start = chrono::steady_clock::now();
+	stopwatch.Start();
 
     if(algoritmo == "GS"){
         coloring = Secuencial::secuencial(graphG,graphH);
@@ -113,9 +128,8 @@ int main(int argc, char** argv)
         coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad,memoryOfSolutions,iteraciones);
     }
 
-	auto end = chrono::steady_clock::now();
-	double totalTime = chrono::duration<double, milli>(end - start).count();
-
+	auto totalTime = stopwatch.EllapsedMicroseconds();
+    
     ColoringScoreVerifier::verify(graphG,graphH,coloring);
 
     clog <<  totalTime << " "
