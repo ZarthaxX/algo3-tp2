@@ -238,7 +238,7 @@ retornar s
         
         int n = G.getNodeCount();
 
-        Coloring initialColoring(Expansivo::expansivo(G,H));//
+        Coloring initialColoring(n);//
         for(Color c=0;c<n;c++)initialColoring[c]=c;
         
         Solution solution(initialColoring);
