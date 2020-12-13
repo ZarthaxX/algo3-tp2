@@ -5,6 +5,8 @@
 
 #include "tabuSearch.h"
 #include "../heuristicasGolosas/expansivo/expansivo.h"
+#include "../heuristicasGolosas/secuencial/secuencial.h"
+#include "../heuristicasGolosas/bruteforcer/bruteforcer.h"
 
 using namespace std;
 
@@ -234,13 +236,18 @@ retornar s
         return score;
     }
     
-    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions,int max_iterations){
+    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions,int max_iterations, string golosoInicial){
         
         int n = G.getNodeCount();
 
         Coloring initialColoring(n);//
-        for(Color c=0;c<n;c++)initialColoring[c]=c;
-        
+        if(golosoInicial=="GS")
+            initialColoring = Secuencial::secuencial(G,H);
+        if(golosoInicial=="GE")
+            initialColoring = Expansivo::expansivo(G,H);
+        if(golosoInicial=="GB")
+            initialColoring = Bruteforcer::bruteforcer(G,H);
+            
         Solution solution(initialColoring);
         Solution bestSolution(solution);
         int bestImpact = calculateImpact(H,bestSolution);

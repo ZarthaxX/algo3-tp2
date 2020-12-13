@@ -78,7 +78,8 @@ int main(int argc, char** argv)
     string tipo_memoria = "none";
     int porcentaje_vecindad = 0;
     int iteraciones = 0;
-
+    string goloso_inicial = "GE";
+    
     if(algoritmo == "TS"){
         if(argc < 5){
             cerr << "Cantidad de argumentos invalido" << endl;
@@ -89,6 +90,9 @@ int main(int argc, char** argv)
         tipo_memoria = string(argv[3]);
         porcentaje_vecindad = atoi(argv[4]);
         iteraciones = atoi(argv[5]);
+        if(argc>=7){
+            goloso_inicial = argv[6];
+        }
     }
     
     bool memoryOfSolutions = (tipo_memoria == "soluciones");
@@ -125,7 +129,7 @@ int main(int argc, char** argv)
     }else if(algoritmo == "GB"){
         coloring = Bruteforcer::bruteforcer(graphG,graphH);
     }else if(algoritmo == "TS"){
-        coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad,memoryOfSolutions,iteraciones);
+        coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad,memoryOfSolutions,iteraciones, goloso_inicial);
     }
 
 	auto totalTime = stopwatch.EllapsedMicroseconds();
