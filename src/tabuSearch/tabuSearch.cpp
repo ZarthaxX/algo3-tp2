@@ -236,7 +236,7 @@ retornar s
         return score;
     }
     
-    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions,int max_iterations, string golosoInicial){
+    Coloring tabuSearch(Graph& G, Graph& H, int memorySize, int neighbourhoodPercentage, bool memoryOfSolutions,int max_iterations, string golosoInicial, long long& tiempo_mejor_solucion){
         
         int n = G.getNodeCount();
 
@@ -344,6 +344,7 @@ retornar s
             if(bestImpact < currentImpact){
                 bestSolution = solution;
                 bestImpact = currentImpact;
+                tiempo_mejor_solucion = stopwatch.EllapsedMicroseconds();
             }
             iterations++;
         }

@@ -18,22 +18,6 @@
 #include "coloringScoreVerifier/coloringScoreVerifier.h"
 
 using namespace std;
-using namespace chrono;
-//high_resolution_clock::time_point now = high_resolution_clock::now();
-//#define TIME duration_cast<duration<double>>(high_resolution_clock::now() - now).count()
-#define NOW high_resolution_clock::now()
-#define TIMEOUT 40000 //10 ms timeout
-#define TIMEOUT2 900000
-#define Now() chrono::high_resolution_clock::now()
-static struct Stopwatch {
-	chrono::high_resolution_clock::time_point c_time, c_timeout;
-	void setTimeout(int us) { c_timeout = c_time + chrono::microseconds(us); }
-	void Start() { c_time = Now();}
-	inline bool Timeout() { return Now() > c_timeout; }
-	long long EllapsedMicroseconds() { return chrono::duration_cast<chrono::microseconds>(Now() - c_time).count(); }
-	long long EllapsedMilliseconds() { return chrono::duration_cast<chrono::milliseconds>(Now() - c_time).count(); }
-} stopwatch;//} Stopwatch
-
 
 int getColoringScore(Graph& graph, Coloring& responseColoring){
 
@@ -121,7 +105,7 @@ int main(int argc, char** argv)
     Coloring coloring;
 
 	stopwatch.Start();
-
+    long long tiempo_mejor_solucion = 0;
     if(algoritmo == "GS"){
         coloring = Secuencial::secuencial(graphG,graphH);
     }else if(algoritmo == "GE"){
@@ -129,7 +113,7 @@ int main(int argc, char** argv)
     }else if(algoritmo == "GB"){
         coloring = Bruteforcer::bruteforcer(graphG,graphH);
     }else if(algoritmo == "TS"){
-        coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad,memoryOfSolutions,iteraciones, goloso_inicial);
+        coloring = TabuSearch::tabuSearch(graphG,graphH,longitud_tabu,porcentaje_vecindad,memoryOfSolutions,iteraciones, goloso_inicial, tiempo_mejor_solucion);
     }
 
 	auto totalTime = stopwatch.EllapsedMicroseconds();
@@ -141,7 +125,8 @@ int main(int argc, char** argv)
          << set<int>(coloring.begin(), coloring.end()).size() << " "
          << longitud_tabu << " "
          << tipo_memoria << " "
-         << porcentaje_vecindad << endl;
+         << porcentaje_vecindad << " "
+         << tiempo_mejor_solucion << endl;
 
     for(Color v : coloring){
         clog << v << " ";
